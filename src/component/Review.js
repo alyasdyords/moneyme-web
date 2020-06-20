@@ -63,7 +63,25 @@ export default class Review extends React.Component {
                                 <Form.Label>Your Information</Form.Label>
                             </Col>
                             <Col className="col-md-6 text-right">
-                                <a style={styles.coloredLabel}>Edit</a>
+                            <Link to={{
+                                    pathname: "/",
+                                    quoteDetails: {
+                                        title: this.state.title,
+                                        firstName: this.state.firstName,
+                                        lastName: this.state.lastName,
+                                        mobile: this.state.mobile,
+                                        email: this.state.email,
+                                        amount: this.state.amount,
+                                        terms:  this.state.terms,
+                                        repayment:  this.state.repayment,
+                                        rate: this.state.rate,
+                                        hasTitleError: false,
+                                        hasFirstNameError: false,
+                                        hasLastNameError: false,
+                                        hasMobileError: false,
+                                        hasEmailError: false                                        
+                                    }
+                                }} style={styles.coloredLabel}>Edit</Link>
                             </Col>
                         </Form.Row>
                         <Form.Row>
@@ -126,7 +144,7 @@ export default class Review extends React.Component {
                                 <hr style={{borderStyle: "dashed"}}></hr>
                             </Col>
                             <Col  className="col-md-3 text-right">
-                                <Form.Label style={styles.label}>over 24 months</Form.Label>
+                                <Form.Label style={styles.label}>over {this.state.terms} months</Form.Label>
                             </Col>
                         </Form.Row>                            
                         <Form.Row>

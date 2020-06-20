@@ -3,12 +3,14 @@ import { Form, Button, Col, Container} from 'react-bootstrap';
 import InputRange from 'react-input-range'
 import {Redirect, Link} from 'react-router-dom';
 import Review from './Review'
+import { Textbox, Select } from 'react-inputs-validation';
+import 'react-inputs-validation/lib/react-inputs-validation.min.css';
 
 export default class Calculator extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      title: this.props.location.quoteDetails ? this.props.location.quoteDetails.title : "Mr.",
+      title: this.props.location.quoteDetails ? this.props.location.quoteDetails.title : "",
       firstName: this.props.location.quoteDetails ? this.props.location.quoteDetails.firstName : "",
       lastName:  this.props.location.quoteDetails ? this.props.location.quoteDetails.lastName : "",
       mobile:  this.props.location.quoteDetails ? this.props.location.quoteDetails.mobile : "",
@@ -17,7 +19,13 @@ export default class Calculator extends React.Component {
       terms:  this.props.location.quoteDetails ? this.props.location.quoteDetails.terms : 6,
       repayment:  this.props.location.quoteDetails ? this.props.location.quoteDetails.repayment : "",
       establishmentFee: 300,
-      rate:  this.props.location.quoteDetails ? this.props.location.quoteDetails.rate : 9
+      rate:  this.props.location.quoteDetails ? this.props.location.quoteDetails.rate : 9,
+      validate: false,
+      hasTitleError: this.props.location.quoteDetails ? this.props.location.quoteDetails.hasTitleError : true,
+      hasFirstNameError: this.props.location.quoteDetails ? this.props.location.quoteDetails.hasFirstNameError :true,
+      hasLastNameError: this.props.location.quoteDetails ? this.props.location.quoteDetails.hasLastNameError : true,
+      hasMobileError: this.props.location.quoteDetails ? this.props.location.quoteDetails.hasMobileError : true,
+      hasEmailError: this.props.location.quoteDetails ? this.props.location.quoteDetails.hasEmailError : true
     };
     console.log(this.state);
   }
@@ -26,11 +34,28 @@ export default class Calculator extends React.Component {
     console.log(this.state);
     return <Redirect to="/review/"/>
   }
+  validateForm = async (e) => {
+    e.persist();
+    debugger;
+    e.preventDefault();
+    await this.setState({ validate: true });
+    console.log(this.state);
+    const {
+      hasTitleError,
+      hasFirstNameError,
+      hasLastNameError,
+      hasEmailError,
+      hasMobileError
+    } = this.state;
+    if (!hasTitleError && !hasFirstNameError && !hasLastNameError && !hasEmailError && !hasMobileError) {
+      this.linkElement.click();
+    }
+  }
   render() {
     return (
       <div className="content d-flex flex-wrap justify-content-center position-absolute w-100 h-100">
-          <Form className="align-items-left align-text-left">
-            <Container className="shadow p-5 mb-9 bg-white rounded" style={{borderWidth:1, borderStyle:"solid", padding:"50px"}}>
+          <Form className="align-items-left align-text-left col-md-6" onSubmit={this.validateForm} >
+            <Container className="shadow p-10 mb-9 bg-white rounded" style={{borderWidth:1, borderStyle:"solid", padding:"50px"}}>
                 <Form.Row className="justify-content-md-center">
                     <p style={styles.title} >Quote Calculator</p>
                   </Form.Row>
@@ -78,18 +103,84 @@ export default class Calculator extends React.Component {
                       <Form.Label>Title</Form.Label>
                       <Form.Row>
                         <Col>
-                          <Form.Control as="select" id="selectTitle" required placeholder="Select title" value={this.state.title} onChange={event => {event.persist(); debugger; this.setState({title : event.target.value}) }}>
-                              <option value="">Select title</option>
-                              <option value="Mr.">Mr.</option>
-                              <option value="Mrs.">Mrs.</option>
-                              <option value="Miss.">Miss</option>
-                          </Form.Control>
+                        <Select
+                          customStyleSelect={{fontSize:"18px", borderRadius: "5px", height: "29px"}}
+                            attributesInput={{ 
+                              id: 'title',
+                              name: 'title',
+                            }}
+                            validate={this.state.validate}
+                            validationCallback={res => this.setState({ hasTitleError: res })}
+                            value={this.state.title} 
+                            optionList={[
+                              { id: '', name: 'Select title' },
+                              { id: 'Mr.', name: 'Mr.' },
+                              { id: 'Mrs.', name: 'Mrs.' },
+                              { id: 'Miss', name: 'Miss' }
+                            ]} 
+                            onChange={(res, e) => {
+                              e.persist(); 
+                              this.setState({title : res.id})
+                              
+                            }}
+                            onBlur={() => {}} 
+                            // customStyleOptionListContainer={{ maxHeight: '200px', overflow: 'auto', fontSize: '14px' }} // Optional.[Object].Default: {}.
+                            validationOption={{
+                              name: 'title',
+                              check: true,
+                              required: true
+                            }}
+                          />                        
                         </Col>
                         <Col>
-                          <Form.Control as="input" id="txtFirstName" required value={this.state.firstName} placeholder="First Name" onChange={event => {event.persist();this.setState({firstName : event.target.value} )}}></Form.Control>
+                            <Textbox
+                              customStyleInput={{fontSize:"18px", borderRadius: "5px", height: "39px"}}
+                              attributesInput={{ // Optional.
+                                id: 'txtFirstName',
+                                name: 'txtFirstName',
+                                type: 'text',
+                                placeholder: 'First Name',
+                              }}
+                              validate={this.state.validate}
+                              validationCallback={res => { debugger; this.setState({ hasFirstNameError: res, validate: false })}}
+                              value={this.state.firstName} // Optional.[String].Default: "".
+                              onChange={(name, e) => {
+                                e.persist();
+                                this.setState({ firstName: name });
+                                console.log(e);
+                              }} // Required.[Func].Default: () => {}. Will return the value.
+                              onBlur={(e) => {console.log(e)}} // Optional.[Func].Default: none. In order to validate the value on blur, you MUST provide a function, even if it is an empty function. Missing this, the validation on blur will not work.
+                              validationOption={{
+                                name: 'First Name', // Optional.[String].Default: "". To display in the Error message. i.e Please enter your {name}.
+                                check: true, // Optional.[Bool].Default: true. To determin if you need to validate.
+                                required: true // Optional.[Bool].Default: true. To determin if it is a required field.
+                              }}
+                            />                        
                         </Col>
                         <Col>
-                          <Form.Control as="input" id="txtLastName" required value={this.state.lastName}placeholder="Last Name" onChange={event => {event.persist();this.setState({lastName : event.target.value} )}}></Form.Control>
+                        <Textbox
+                            customStyleInput={{fontSize:"18px", borderRadius: "5px", height: "39px"}}
+                              attributesInput={{ // Optional.
+                                id: 'txtLastName',
+                                name: 'txtLastName',
+                                type: 'text',
+                                placeholder: 'Last Name',
+                              }}
+                              validate={this.state.validate}
+                              validationCallback={res => this.setState({ hasLastNameError: res, validate: false })}
+                              value={this.state.lastName} // Optional.[String].Default: "".
+                              onChange={(name, e) => {
+                                e.persist();
+                                this.setState({ lastName: name });
+                                console.log(e);
+                              }} // Required.[Func].Default: () => {}. Will return the value.
+                              onBlur={(e) => {console.log(e)}} // Optional.[Func].Default: none. In order to validate the value on blur, you MUST provide a function, even if it is an empty function. Missing this, the validation on blur will not work.
+                              validationOption={{
+                                name: 'Last Name', // Optional.[String].Default: "". To display in the Error message. i.e Please enter your {name}.
+                                check: true, // Optional.[Bool].Default: true. To determin if you need to validate.
+                                required: true // Optional.[Bool].Default: true. To determin if it is a required field.
+                              }}
+                            />                             
                         </Col>
                         
                       </Form.Row>
@@ -97,10 +188,58 @@ export default class Calculator extends React.Component {
                   <Form.Group>
                     <Form.Row>
                       <Col>
-                        <Form.Control type="email" required placeholder="Your email@domain.com" value={this.state.email} onChange={event => {event.persist();this.setState({email : event.target.value} )}}></Form.Control>
+                      <Textbox
+                        customStyleInput={{fontSize:"18px", borderRadius: "5px", height: "39px"}}
+                              attributesInput={{ // Optional.
+                                id: 'txtEmail',
+                                name: 'txtEmail',
+                                type: 'text',
+                                placeholder: 'youremail@domain.com',
+                              }}
+                              validate={this.state.validate}
+                              validationCallback={res => this.setState({ hasEmailError: res })}
+                              value={this.state.email} // Optional.[String].Default: "".
+                              onChange={(name, e) => {
+                                e.persist();
+                                this.setState({ email: name });
+                                console.log(e);
+                              }} // Required.[Func].Default: () => {}. Will return the value.
+                              onBlur={(e) => {console.log(e)}} // Optional.[Func].Default: none. In order to validate the value on blur, you MUST provide a function, even if it is an empty function. Missing this, the validation on blur will not work.
+                              validationOption={{
+                                name: "Email",
+                                reg: /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/, // Optional.[Bool].Default: "" Custom regex.
+                                regMsg: 'Please check your email format', // Optional.[String].Default: "" Custom regex error message.
+                                check: true, // Optional.[Bool].Default: true. To determin if you need to validate.
+                                required: true // Optional.[Bool].Default: true. To determin if it is a required field.
+                              }}
+                            />                         
                       </Col>
                       <Col>
-                        <Form.Control type="tel" placeholder="Mobile number(123-23-234)" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required value={this.state.mobile} onChange={event => {event.persist();this.setState({mobile : event.target.value} )}}></Form.Control>
+                      <Textbox
+                        customStyleInput={{fontSize:"18px", borderRadius: "5px", height: "39px"}}
+                              attributesInput={{ // Optional.
+                                id: 'txtMobile',
+                                name: 'txtMobile',
+                                type: 'text',
+                                placeholder: 'Mobile(+912 8087339090)',
+                              }}
+                              validate={this.state.validate}
+                              validationCallback={res => this.setState({ hasMobileError: res })}
+                              value={this.state.mobile} // Optional.[String].Default: "".
+                              onChange={(name, e) => {
+                                e.persist();
+                                this.setState({ mobile: name });
+                                console.log(e);
+                              }} // Required.[Func].Default: () => {}. Will return the value.
+                              onBlur={(e) => {console.log(e)}} // Optional.[Func].Default: none. In order to validate the value on blur, you MUST provide a function, even if it is an empty function. Missing this, the validation on blur will not work.
+                              validationOption={{
+                                name: 'Mobile', // Optional.[String].Default: "". To display in the Error message. i.e Please enter your {name}.
+                                reg: /^(\+\d{1,3}[- ]?)?\d{10}$/,
+                                regMsg: 'Please check your mobile format',
+                                check: true, // Optional.[Bool].Default: true. To determin if you need to validate.
+                                required: true // Optional.[Bool].Default: true. To determin if it is a required field.
+                              }}
+                            />                       
                       </Col>
                     </Form.Row>
                   </Form.Group>
@@ -119,10 +258,12 @@ export default class Calculator extends React.Component {
                             repayment:  this.state.repayment,
                             rate: this.state.rate
                           }
-                     }} onClick={() => {
+                     }} onClick={ async (e) => {
                        
-                     }} className="btn btn-primary success shadow mb-9 pd-5" style={{display:"none"}}>Calculate quote</Link>
-                      <input className="btn btn-primary success shadow mb-9 pd-5" type="submit" value="Calculate quote" />
+                     }}
+                     ref={input => this.linkElement = input}
+                     className="btn btn-primary success shadow mb-9 pd-5" style={{display:"none"}}>Calculate quote</Link>
+                     <input type="submit" onClick={this.validateForm} className="btn btn-primary success shadow mb-9 pd-5" value="Calculate quote" />
                   </Form.Row>
                   <Form.Row className="justify-content-md-center">
                     <p style={styles.footer} >Quote does not affect your credit score</p>
