@@ -4,6 +4,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import Calculator from './component/Calculator'
 import Review from './component/Review'
+import Success from './component/Success'
 import {BrowserRouter,Route, Redirect,Switch} from 'react-router-dom';
 
 
@@ -14,7 +15,7 @@ function App() {
       <BrowserRouter>
         <Route  exact path="/" component={Calculator}/>
         <Route path="/review" component={Review}/>
-
+        <Route path="/success" component={Success}/>
       </BrowserRouter>
         
     </div>

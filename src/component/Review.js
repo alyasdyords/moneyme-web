@@ -8,8 +8,9 @@ export default class Review extends React.Component {
     super(props);
     console.log(this.props.location)
     this.state = {
-        title:  this.props.location.quoteDetails.title,
-      name: this.props.location.quoteDetails.firstName + ' ' + this.props.location.quoteDetails.lastName,
+      title:  this.props.location.quoteDetails.title,
+      firstName: this.props.location.quoteDetails.firstName,
+      lastName: this.props.location.quoteDetails.lastName,
       mobile: this.props.location.quoteDetails.mobile,
       email: this.props.location.quoteDetails.email,
       amount: this.props.location.quoteDetails.amount,
@@ -20,6 +21,8 @@ export default class Review extends React.Component {
       total: 0
     };
 
+    console.log("review");
+    console.log(this.state);
     
   }
 
@@ -68,7 +71,7 @@ export default class Review extends React.Component {
                                 <Form.Label style={styles.label}>Name</Form.Label>
                             </Col>
                             <Col className="col-md-6 text-right">
-                                <Form.Label style={styles.label}>{this.state.title + ' ' + this.state.name}</Form.Label>
+                                <Form.Label style={styles.label}>{this.state.title + ' ' + this.state.firstName + ' ' + this.state.lastName}</Form.Label>
                             </Col>
                         </Form.Row>                
                         <Form.Row>
@@ -94,7 +97,20 @@ export default class Review extends React.Component {
                                 <Form.Label>Finance Details</Form.Label>
                             </Col>
                             <Col className="col-md-6 text-right">
-                            <a style={styles.coloredLabel}>Edit</a>
+                            <Link to={{
+                                    pathname: "/",
+                                    quoteDetails: {
+                                        title: this.state.title,
+                                        firstName: this.state.firstName,
+                                        lastName: this.state.firstName,
+                                        mobile: this.state.mobile,
+                                        email: this.state.email,
+                                        amount: this.state.amount,
+                                        terms:  this.state.terms,
+                                        repayment:  this.state.repayment,
+                                        rate: this.state.rate
+                                    }
+                                }} style={styles.coloredLabel}>Edit</Link>
                             </Col>
                         </Form.Row>
                         <Form.Row>
@@ -131,7 +147,7 @@ export default class Review extends React.Component {
                         </Form.Row>                                  
                     </Form.Group>           
                         <Form.Row className="justify-content-md-center">
-                            <Link to="/" className="btn btn-primary success shadow mb-9 pd-5">Apply now</Link>
+                            <Link to="/success" className="btn btn-primary success shadow mb-9 pd-5">Apply now</Link>
                         </Form.Row>
                         <Form.Row className="justify-content-md-center">
                             <p style={styles.footer}>Your repayments will consist of an establishment fee of ${this.state.establishmentFee} and interest of ${this.state.total}. The repayment amount is based on the variables selected, is subject to our assessment and suitability, and other important terms and conditions apply.*</p>

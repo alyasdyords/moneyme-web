@@ -8,19 +8,18 @@ export default class Calculator extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      value: 5000,
-      monthValue: 3,
-      title: "Mr.",
-      firstName: "",
-      lastName: "",
-      mobile: "",
-      email: "",
-      amount: 5000,
-      terms: 6,
-      repayment: "",
+      title: this.props.location.quoteDetails ? this.props.location.quoteDetails.title : "Mr.",
+      firstName: this.props.location.quoteDetails ? this.props.location.quoteDetails.firstName : "",
+      lastName:  this.props.location.quoteDetails ? this.props.location.quoteDetails.lastName : "",
+      mobile:  this.props.location.quoteDetails ? this.props.location.quoteDetails.mobile : "",
+      email:  this.props.location.quoteDetails ? this.props.location.quoteDetails.email : "",
+      amount:  this.props.location.quoteDetails ? this.props.location.quoteDetails.amount : 5000,
+      terms:  this.props.location.quoteDetails ? this.props.location.quoteDetails.terms : 6,
+      repayment:  this.props.location.quoteDetails ? this.props.location.quoteDetails.repayment : "",
       establishmentFee: 300,
-      rate: 9
+      rate:  this.props.location.quoteDetails ? this.props.location.quoteDetails.rate : 9
     };
+    console.log(this.state);
   }
 
   onCalculate =() => {
@@ -86,10 +85,10 @@ export default class Calculator extends React.Component {
                           </Form.Control>
                         </Col>
                         <Col>
-                          <Form.Control as="input" id="txtFirstName" placeholder="First Name" onChange={event => {event.persist();this.setState({firstName : event.target.value} )}}></Form.Control>
+                          <Form.Control as="input" id="txtFirstName" value={this.state.firstName} placeholder="First Name" onChange={event => {event.persist();this.setState({firstName : event.target.value} )}}></Form.Control>
                         </Col>
                         <Col>
-                          <Form.Control as="input" id="txtLastName" placeholder="Last Name" onChange={event => {event.persist();this.setState({lastName : event.target.value} )}}></Form.Control>
+                          <Form.Control as="input" id="txtLastName" value={this.state.lastName}placeholder="Last Name" onChange={event => {event.persist();this.setState({lastName : event.target.value} )}}></Form.Control>
                         </Col>
                         
                       </Form.Row>
@@ -97,10 +96,10 @@ export default class Calculator extends React.Component {
                   <Form.Group>
                     <Form.Row>
                       <Col>
-                        <Form.Control type="email" placeholder="Your email" onChange={event => {event.persist();this.setState({email : event.target.value} )}}></Form.Control>
+                        <Form.Control type="email" placeholder="Your email" value={this.state.email} onChange={event => {event.persist();this.setState({email : event.target.value} )}}></Form.Control>
                       </Col>
                       <Col>
-                        <Form.Control type="tel" placeholder="Mobile number" onChange={event => {event.persist();this.setState({mobile : event.target.value} )}}></Form.Control>
+                        <Form.Control type="tel" placeholder="Mobile number" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required value={this.state.mobile} onChange={event => {event.persist();this.setState({mobile : event.target.value} )}}></Form.Control>
                       </Col>
                     </Form.Row>
                   </Form.Group>
@@ -119,6 +118,8 @@ export default class Calculator extends React.Component {
                             repayment:  this.state.repayment,
                             rate: this.state.rate
                           }
+                     }} onClick={() => {
+                       alert('test');
                      }} className="btn btn-primary success shadow mb-9 pd-5">Calculate quote</Link>
                   </Form.Row>
                   <Form.Row className="justify-content-md-center">
