@@ -78,17 +78,18 @@ export default class Calculator extends React.Component {
                       <Form.Label>Title</Form.Label>
                       <Form.Row>
                         <Col>
-                          <Form.Control as="select" id="selectTitle" value={this.state.title} onChange={event => {event.persist(); debugger; this.setState({title : event.target.value}) }}>
+                          <Form.Control as="select" id="selectTitle" required placeholder="Select title" value={this.state.title} onChange={event => {event.persist(); debugger; this.setState({title : event.target.value}) }}>
+                              <option value="">Select title</option>
                               <option value="Mr.">Mr.</option>
                               <option value="Mrs.">Mrs.</option>
                               <option value="Miss.">Miss</option>
                           </Form.Control>
                         </Col>
                         <Col>
-                          <Form.Control as="input" id="txtFirstName" value={this.state.firstName} placeholder="First Name" onChange={event => {event.persist();this.setState({firstName : event.target.value} )}}></Form.Control>
+                          <Form.Control as="input" id="txtFirstName" required value={this.state.firstName} placeholder="First Name" onChange={event => {event.persist();this.setState({firstName : event.target.value} )}}></Form.Control>
                         </Col>
                         <Col>
-                          <Form.Control as="input" id="txtLastName" value={this.state.lastName}placeholder="Last Name" onChange={event => {event.persist();this.setState({lastName : event.target.value} )}}></Form.Control>
+                          <Form.Control as="input" id="txtLastName" required value={this.state.lastName}placeholder="Last Name" onChange={event => {event.persist();this.setState({lastName : event.target.value} )}}></Form.Control>
                         </Col>
                         
                       </Form.Row>
@@ -96,10 +97,10 @@ export default class Calculator extends React.Component {
                   <Form.Group>
                     <Form.Row>
                       <Col>
-                        <Form.Control type="email" placeholder="Your email" value={this.state.email} onChange={event => {event.persist();this.setState({email : event.target.value} )}}></Form.Control>
+                        <Form.Control type="email" required placeholder="Your email@domain.com" value={this.state.email} onChange={event => {event.persist();this.setState({email : event.target.value} )}}></Form.Control>
                       </Col>
                       <Col>
-                        <Form.Control type="tel" placeholder="Mobile number" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required value={this.state.mobile} onChange={event => {event.persist();this.setState({mobile : event.target.value} )}}></Form.Control>
+                        <Form.Control type="tel" placeholder="Mobile number(123-23-234)" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required value={this.state.mobile} onChange={event => {event.persist();this.setState({mobile : event.target.value} )}}></Form.Control>
                       </Col>
                     </Form.Row>
                   </Form.Group>
@@ -119,8 +120,9 @@ export default class Calculator extends React.Component {
                             rate: this.state.rate
                           }
                      }} onClick={() => {
-                       alert('test');
-                     }} className="btn btn-primary success shadow mb-9 pd-5">Calculate quote</Link>
+                       
+                     }} className="btn btn-primary success shadow mb-9 pd-5" style={{display:"none"}}>Calculate quote</Link>
+                      <input className="btn btn-primary success shadow mb-9 pd-5" type="submit" value="Calculate quote" />
                   </Form.Row>
                   <Form.Row className="justify-content-md-center">
                     <p style={styles.footer} >Quote does not affect your credit score</p>
