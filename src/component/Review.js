@@ -44,9 +44,14 @@ export default class Review extends React.Component {
 
     return pmt;
 }  
+
+    formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
   componentDidMount(){
-    let monthly = this.pmt(this.state.rate/1200, this.state.terms,-this.state.amount,0,0);
-    this.setState({repayment: '$'+monthly.toFixed(2), total:((monthly*this.state.terms)-this.state.amount).toFixed(2)});
+    let monthly = this.pmt(this.state.rate/1200, this.state.terms,-this.state.amount,0,0) ;
+    this.setState({repayment: this.formatter.format(monthly), total:this.formatter.format(((monthly*this.state.terms)-this.state.amount) )});
   }
    
   render() {
@@ -140,7 +145,7 @@ export default class Review extends React.Component {
                                 <Form.Label style={styles.mediumLabel}>Finance Amount</Form.Label>
                             </Col>
                             <Col  className="col-md-6 text-right">
-                                <Form.Label style={styles.coloredLabel}>${this.state.amount}</Form.Label>
+                                <Form.Label style={styles.coloredLabel}>{this.formatter.format(this.state.amount)}</Form.Label>
                             </Col>
                         </Form.Row>                            
                         <Form.Row>
@@ -202,7 +207,7 @@ export default class Review extends React.Component {
                             className="btn btn-primary success shadow mb-9 pd-5">Apply now</Link>
                         </Form.Row>
                         <Form.Row className="justify-content-md-center">
-                            <p style={styles.footer}>Your repayments will consist of an establishment fee of ${this.state.establishmentFee} and interest of ${this.state.total}. The repayment amount is based on the variables selected, is subject to our assessment and suitability, and other important terms and conditions apply.*</p>
+                            <p style={styles.footer}>Your repayments will consist of an establishment fee of ${this.state.establishmentFee} and interest of {this.state.total}. The repayment amount is based on the variables selected, is subject to our assessment and suitability, and other important terms and conditions apply.*</p>
                         </Form.Row>
                 </Container>
             </Form>
