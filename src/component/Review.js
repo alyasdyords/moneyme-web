@@ -3,6 +3,8 @@ import { Form, Button, Col, Container} from 'react-bootstrap';
 import {Redirect, Link} from 'react-router-dom';
 import Calculator from './Calculator';
 
+const _url = "http://192.168.56.1:5000/";
+
 export default class Review extends React.Component {
   constructor(props){
     super(props);
@@ -81,7 +83,9 @@ export default class Review extends React.Component {
                                         hasMobileError: false,
                                         hasEmailError: false                                        
                                     }
-                                }} style={styles.coloredLabel}>Edit</Link>
+                                }} 
+                                
+                     style={styles.coloredLabel}>Edit</Link>
                             </Col>
                         </Form.Row>
                         <Form.Row>
@@ -165,7 +169,37 @@ export default class Review extends React.Component {
                         </Form.Row>                                  
                     </Form.Group>           
                         <Form.Row className="justify-content-md-center">
-                            <Link to="/success" className="btn btn-primary success shadow mb-9 pd-5">Apply now</Link>
+                            <Link to="/success" 
+                                onClick={ async (e) => {
+                                    debugger;
+                                    var req = {
+                                        "amountRequired": this.state.amount,
+                                        "term": this.state.terms,
+                                        "title": this.state.title,
+                                        "firstName": this.state.firstName,
+                                        "lastName": this.state.lastName,
+                                        "mobile": this.state.mobile,
+                                        "email": this.state.email,
+                                        "termPayment": this.state.repayment,
+                                        "totalInterest": this.state.total,
+                                        "establishmentFee": this.state.establishmentFee
+                                    };
+                                    const res = await fetch(_url + "addUpdateLoan", {
+                                        method: "post",
+                                        body: JSON.stringify(req),
+                                        headers: { "Content-Type": "application/json" }
+                                        }).then(res => {
+                                            console.log("update quote response...." + JSON.stringify(res));
+                                            return res;
+                                        }).catch(ex => {
+                                            console.log("exception update quote.." + ex);
+                                            throw ex;
+                                        });
+
+                                        return res;
+                                       }
+                                    }
+                            className="btn btn-primary success shadow mb-9 pd-5">Apply now</Link>
                         </Form.Row>
                         <Form.Row className="justify-content-md-center">
                             <p style={styles.footer}>Your repayments will consist of an establishment fee of ${this.state.establishmentFee} and interest of ${this.state.total}. The repayment amount is based on the variables selected, is subject to our assessment and suitability, and other important terms and conditions apply.*</p>

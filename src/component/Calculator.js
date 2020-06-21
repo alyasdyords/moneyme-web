@@ -6,10 +6,15 @@ import Review from './Review'
 import { Textbox, Select } from 'react-inputs-validation';
 import 'react-inputs-validation/lib/react-inputs-validation.min.css';
 
+const _url = "http://192.168.56.1:5000/";
+
 export default class Calculator extends React.Component {
   constructor(props){
     super(props);
+    debugger;
+    console.log(props);
     this.state = {
+      id: this.props.location.search.replace('?', ''),
       title: this.props.location.quoteDetails ? this.props.location.quoteDetails.title : "",
       firstName: this.props.location.quoteDetails ? this.props.location.quoteDetails.firstName : "",
       lastName:  this.props.location.quoteDetails ? this.props.location.quoteDetails.lastName : "",
@@ -29,6 +34,41 @@ export default class Calculator extends React.Component {
     };
     console.log(this.state);
   }
+
+ 
+  
+
+  
+
+  async componentDidMount() {
+    const res = await fetch(_url + "" + this.props.location.search.replace('?', '') )
+      .then(async (res) => {
+        console.log("update quote response...." + JSON.stringify(res));
+        return await res.json();
+      }).catch(ex => {
+        console.log("exception update quote.." + ex);
+        throw ex;
+      });
+      debugger;
+      await this.setState({
+        id: this.props.location.search.replace('?', ''),
+        title: res.title,
+        firstName: res.firstName,
+        lastName:  res.lastName,
+        mobile:  res.mobile,
+        email:  res.email,
+        amount:  res.amountRequired,
+        terms:  res.term,
+        hasTitleError: false,
+        hasFirstNameError: false,
+        hasLastNameError: false,
+        hasMobileError: false,
+        hasEmailError: false,
+      })
+      console.log(this.state);
+      return res;
+    }
+  
 
   onCalculate =() => {
     console.log(this.state);
@@ -64,12 +104,13 @@ export default class Calculator extends React.Component {
                         maxValue={15000}
                         minValue={2100}
                         step={100}
+                        value={this.state.amount}
                         formatLabel={(value) => {
                           var formatter = new Intl.NumberFormat("en-US");
                           var x = formatter.format(value.toString().replace(/,/g, ""));
                           return '$' + x;
                         }}
-                        value={this.state.amount}
+                        
                         onChange={value => this.setState({amount : value} )}
                         onChangeComplete={value => console.log(value)}
                         />
@@ -259,8 +300,31 @@ export default class Calculator extends React.Component {
                             rate: this.state.rate
                           }
                      }} onClick={ async (e) => {
-                       
-                     }}
+                       var req = {
+                          "_id": this.state.id,
+                          "amountRequired": this.state.amount,
+                          "term": this.state.terms,
+                          "title": this.state.title,
+                          "firstName": this.state.firstName,
+                          "lastName": this.state.lastName,
+                          "mobile": this.state.mobile,
+                          "email": this.state.email
+                       };
+                      const res = await fetch(_url + "addUpdateQuote", {
+                          method: "post",
+                          body: JSON.stringify(req),
+                          headers: { "Content-Type": "application/json" }
+                        }).then(res => {
+                            console.log("update quote response...." + JSON.stringify(res));
+                            return res;
+                          }).catch(ex => {
+                            console.log("exception update quote.." + ex);
+                            throw ex;
+                          });
+
+                        return res;
+                      }
+                     }
                      ref={input => this.linkElement = input}
                      className="btn btn-primary success shadow mb-9 pd-5" style={{display:"none"}}>Calculate quote</Link>
                      <input type="submit" onClick={this.validateForm} className="btn btn-primary success shadow mb-9 pd-5" value="Calculate quote" />
