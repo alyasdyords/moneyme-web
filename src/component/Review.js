@@ -51,7 +51,7 @@ export default class Review extends React.Component {
     });
   componentDidMount(){
     let monthly = this.pmt(this.state.rate/1200, this.state.terms,-this.state.amount,0,0) ;
-    this.setState({repayment: this.formatter.format(monthly), total:this.formatter.format(((monthly*this.state.terms)-this.state.amount) )});
+    this.setState({repayment: this.formatter.format(monthly + (this.state.establishmentFee/this.state.terms)), total:this.formatter.format(((monthly*this.state.terms)-this.state.amount) )});
   }
    
   render() {
