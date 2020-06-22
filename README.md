@@ -2,12 +2,12 @@
 exam
 
 moneyme-web
-  npm install
-  npm start
+  1. npm install
+  2. npm start
 
 then go to moneyme-api 
-  npm install
-  npm start 
+  1. npm install
+  2. npm start 
 
 then open the external.html
 
