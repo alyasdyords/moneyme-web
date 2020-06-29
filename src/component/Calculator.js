@@ -5,16 +5,16 @@ import {Redirect, Link} from 'react-router-dom';
 import Review from './Review'
 import { Textbox, Select } from 'react-inputs-validation';
 import 'react-inputs-validation/lib/react-inputs-validation.min.css';
+import axios from 'axios';
 
-const _url = "http://192.168.56.1:5000/";
+const _url = "https://localhost:44381/api/";
 
 export default class Calculator extends React.Component {
   constructor(props){
     super(props);
-    debugger;
     console.log(props);
     this.state = {
-      id: this.props.location.search.replace('?', ''),
+      id: this.props.location.search === "" ? this.props.location.quoteDetails.id :  this.props.location.search.replace('?', ''),
       title: this.props.location.quoteDetails ? this.props.location.quoteDetails.title : "",
       firstName: this.props.location.quoteDetails ? this.props.location.quoteDetails.firstName : "",
       lastName:  this.props.location.quoteDetails ? this.props.location.quoteDetails.lastName : "",
@@ -41,17 +41,21 @@ export default class Calculator extends React.Component {
   
 
   async componentDidMount() {
-    const res = await fetch(_url + "" + this.props.location.search.replace('?', '') )
+    let id = this.props.location.search.replace('?', '');
+    if(id === "")
+    {
+      id= this.props.location.quoteDetails.id;
+    }
+    const res = await axios(_url + "Quotes/" + id )
       .then(async (res) => {
-        console.log("update quote response...." + JSON.stringify(res));
-        return await res.json();
+        console.log(JSON.stringify(res));
+        return await res.data;
       }).catch(ex => {
         console.log("exception update quote.." + ex);
         throw ex;
       });
-      debugger;
       await this.setState({
-        id: this.props.location.search.replace('?', ''),
+        id: this.props.location.search === "" ? res.id : this.props.location.search.replace('?', ''),
         title: res.title,
         firstName: res.firstName,
         lastName:  res.lastName,
@@ -76,7 +80,6 @@ export default class Calculator extends React.Component {
   }
   validateForm = async (e) => {
     e.persist();
-    debugger;
     e.preventDefault();
     await this.setState({ validate: true });
     console.log(this.state);
@@ -183,18 +186,18 @@ export default class Calculator extends React.Component {
                                 placeholder: 'First Name',
                               }}
                               validate={this.state.validate}
-                              validationCallback={res => { debugger; this.setState({ hasFirstNameError: res, validate: false })}}
-                              value={this.state.firstName} // Optional.[String].Default: "".
+                              validationCallback={res => { this.setState({ hasFirstNameError: res, validate: false })}}
+                              value={this.state.firstName}
                               onChange={(name, e) => {
                                 e.persist();
                                 this.setState({ firstName: name });
                                 console.log(e);
-                              }} // Required.[Func].Default: () => {}. Will return the value.
-                              onBlur={(e) => {console.log(e)}} // Optional.[Func].Default: none. In order to validate the value on blur, you MUST provide a function, even if it is an empty function. Missing this, the validation on blur will not work.
+                              }} 
+                              onBlur={(e) => {console.log(e)}} 
                               validationOption={{
-                                name: 'First Name', // Optional.[String].Default: "". To display in the Error message. i.e Please enter your {name}.
-                                check: true, // Optional.[Bool].Default: true. To determin if you need to validate.
-                                required: true // Optional.[Bool].Default: true. To determin if it is a required field.
+                                name: 'First Name',
+                                check: true,
+                                required: true
                               }}
                             />                        
                         </Col>
@@ -209,17 +212,17 @@ export default class Calculator extends React.Component {
                               }}
                               validate={this.state.validate}
                               validationCallback={res => this.setState({ hasLastNameError: res, validate: false })}
-                              value={this.state.lastName} // Optional.[String].Default: "".
+                              value={this.state.lastName} 
                               onChange={(name, e) => {
                                 e.persist();
                                 this.setState({ lastName: name });
                                 console.log(e);
-                              }} // Required.[Func].Default: () => {}. Will return the value.
-                              onBlur={(e) => {console.log(e)}} // Optional.[Func].Default: none. In order to validate the value on blur, you MUST provide a function, even if it is an empty function. Missing this, the validation on blur will not work.
+                              }} 
+                              onBlur={(e) => {console.log(e)}}
                               validationOption={{
-                                name: 'Last Name', // Optional.[String].Default: "". To display in the Error message. i.e Please enter your {name}.
-                                check: true, // Optional.[Bool].Default: true. To determin if you need to validate.
-                                required: true // Optional.[Bool].Default: true. To determin if it is a required field.
+                                name: 'Last Name',
+                                check: true,
+                                required: true
                               }}
                             />                             
                         </Col>
@@ -231,7 +234,7 @@ export default class Calculator extends React.Component {
                       <Col>
                       <Textbox
                         customStyleInput={{fontSize:"18px", borderRadius: "5px", height: "39px"}}
-                              attributesInput={{ // Optional.
+                              attributesInput={{ 
                                 id: 'txtEmail',
                                 name: 'txtEmail',
                                 type: 'text',
@@ -239,19 +242,19 @@ export default class Calculator extends React.Component {
                               }}
                               validate={this.state.validate}
                               validationCallback={res => this.setState({ hasEmailError: res })}
-                              value={this.state.email} // Optional.[String].Default: "".
+                              value={this.state.email}
                               onChange={(name, e) => {
                                 e.persist();
                                 this.setState({ email: name });
                                 console.log(e);
-                              }} // Required.[Func].Default: () => {}. Will return the value.
-                              onBlur={(e) => {console.log(e)}} // Optional.[Func].Default: none. In order to validate the value on blur, you MUST provide a function, even if it is an empty function. Missing this, the validation on blur will not work.
+                              }}
+                              onBlur={(e) => {console.log(e)}}
                               validationOption={{
                                 name: "Email",
-                                reg: /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/, // Optional.[Bool].Default: "" Custom regex.
-                                regMsg: 'Please check your email format', // Optional.[String].Default: "" Custom regex error message.
-                                check: true, // Optional.[Bool].Default: true. To determin if you need to validate.
-                                required: true // Optional.[Bool].Default: true. To determin if it is a required field.
+                                reg: /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/,
+                                regMsg: 'Please check your email format',
+                                check: true,
+                                required: true
                               }}
                             />                         
                       </Col>
@@ -266,19 +269,19 @@ export default class Calculator extends React.Component {
                               }}
                               validate={this.state.validate}
                               validationCallback={res => this.setState({ hasMobileError: res })}
-                              value={this.state.mobile} // Optional.[String].Default: "".
+                              value={this.state.mobile}
                               onChange={(name, e) => {
                                 e.persist();
                                 this.setState({ mobile: name });
                                 console.log(e);
-                              }} // Required.[Func].Default: () => {}. Will return the value.
-                              onBlur={(e) => {console.log(e)}} // Optional.[Func].Default: none. In order to validate the value on blur, you MUST provide a function, even if it is an empty function. Missing this, the validation on blur will not work.
+                              }} 
+                              onBlur={(e) => {console.log(e)}} 
                               validationOption={{
-                                name: 'Mobile', // Optional.[String].Default: "". To display in the Error message. i.e Please enter your {name}.
+                                name: 'Mobile', 
                                 reg: /^(\+\d{1,3}[- ]?)?\d{10}$/,
                                 regMsg: 'Please check your mobile format',
-                                check: true, // Optional.[Bool].Default: true. To determin if you need to validate.
-                                required: true // Optional.[Bool].Default: true. To determin if it is a required field.
+                                check: true, 
+                                required: true
                               }}
                             />                       
                       </Col>
@@ -289,6 +292,7 @@ export default class Calculator extends React.Component {
                     <Link to={{
                           pathname: "/review/",
                           quoteDetails: {
+                            id: this.state.id,
                             title: this.state.title,
                             firstName: this.state.firstName,
                             lastName: this.state.firstName,
@@ -301,25 +305,29 @@ export default class Calculator extends React.Component {
                           }
                      }} onClick={ async (e) => {
                        var req = {
-                          "_id": this.state.id,
+                          "id": this.state.id,
                           "amountRequired": this.state.amount,
                           "term": this.state.terms,
                           "title": this.state.title,
                           "firstName": this.state.firstName,
                           "lastName": this.state.lastName,
                           "mobile": this.state.mobile,
-                          "email": this.state.email
+                          "email": this.state.email,
+                          "createDate": new Date()
                        };
-                      const res = await fetch(_url + "addUpdateQuote", {
-                          method: "post",
-                          body: JSON.stringify(req),
-                          headers: { "Content-Type": "application/json" }
-                        }).then(res => {
-                            console.log("update quote response...." + JSON.stringify(res));
-                            return res;
-                          }).catch(ex => {
-                            console.log("exception update quote.." + ex);
-                            throw ex;
+                          const res = axios({
+                              method: 'put',
+                              url: _url + "Quotes/" + this.state.id,
+                              headers: { 'Content-Type': 'application/json' },
+                              data: req
+                          }).then(function (response) {
+                              if (response.status === 200 && response.data.status === 200) {
+                                  console.log(response);
+                              } else {
+                                console.log(response);
+                              }
+                          }).catch(function (error) {
+                            console.log(error);
                           });
 
                         return res;

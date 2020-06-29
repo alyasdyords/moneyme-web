@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
+    <title>Money Me</title>
   </head>
   <body>
     <h1>Want money?</h1>
@@ -56,7 +56,7 @@
             </div>
 
         </div>
-          <input type="submit" class="btn btn-primary" onclick="loan();"></input>
+          <input type="button" class="btn btn-primary" onclick="loan();" value="Submit"></input>
         </div>
       </div>
 
@@ -71,7 +71,6 @@
 
     <script>
         function loan() {
-            debugger;
             var req = {
                 "amountRequired" : parseFloat( $('#txtAmount').val()),
                 "term": parseInt($('#txtTerms').val()),
@@ -83,19 +82,22 @@
             }
         
             $.ajax({
-                    url: 'http://localhost:5000/addUpdateQuote',
+                    url: 'https://localhost:44381/api/Quotes',
                     dataType: 'json',
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(req),
                     success: function( data, textStatus, jQxhr ){
-                        location.href = data.returnUrl;
+                      console.log(data.returnUrl);
+                      location.href = data.returnUrl;
                     },
                     error: function( jqXhr, textStatus, errorThrown ){
+                      alert("Please check your entry");
                         console.log( errorThrown );
                     }
                 });
         }
+
     </script>
   </body>
 </html>

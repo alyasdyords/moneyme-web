@@ -2,14 +2,17 @@ import React from 'react'
 import { Form, Button, Col, Container} from 'react-bootstrap';
 import {Redirect, Link} from 'react-router-dom';
 import Calculator from './Calculator';
+import axios from 'axios';
 
-const _url = "http://192.168.56.1:5000/";
+
+const _url = "https://localhost:44381/api/";
 
 export default class Review extends React.Component {
   constructor(props){
     super(props);
     console.log(this.props.location)
     this.state = {
+        id: this.props.location.quoteDetails.id,
       title:  this.props.location.quoteDetails.title,
       firstName: this.props.location.quoteDetails.firstName,
       lastName: this.props.location.quoteDetails.lastName,
@@ -29,7 +32,6 @@ export default class Review extends React.Component {
   }
 
   pmt = (rate, nperiod, pv, fv, type) => {
-      debugger;
     if (!fv) fv = 0;
     if (!type) type = 0;
 
@@ -52,6 +54,8 @@ export default class Review extends React.Component {
   componentDidMount(){
     let monthly = this.pmt(this.state.rate/1200, this.state.terms,-this.state.amount,0,0) ;
     this.setState({repayment: this.formatter.format(monthly + (this.state.establishmentFee/this.state.terms)), total:this.formatter.format(((monthly*this.state.terms)-this.state.amount) )});
+    console.log("component did mount");
+    console.log(this.state);
   }
    
   render() {
@@ -73,6 +77,7 @@ export default class Review extends React.Component {
                             <Link to={{
                                     pathname: "/",
                                     quoteDetails: {
+                                        id: this.state.id,
                                         title: this.state.title,
                                         firstName: this.state.firstName,
                                         lastName: this.state.lastName,
@@ -127,6 +132,7 @@ export default class Review extends React.Component {
                             <Link to={{
                                     pathname: "/",
                                     quoteDetails: {
+                                        id: this.state.id,
                                         title: this.state.title,
                                         firstName: this.state.firstName,
                                         lastName: this.state.firstName,
@@ -176,7 +182,6 @@ export default class Review extends React.Component {
                         <Form.Row className="justify-content-md-center">
                             <Link to="/success" 
                                 onClick={ async (e) => {
-                                    debugger;
                                     var req = {
                                         "amountRequired": this.state.amount,
                                         "term": this.state.terms,
@@ -185,22 +190,25 @@ export default class Review extends React.Component {
                                         "lastName": this.state.lastName,
                                         "mobile": this.state.mobile,
                                         "email": this.state.email,
-                                        "termPayment": this.state.repayment,
-                                        "totalInterest": this.state.total,
-                                        "establishmentFee": this.state.establishmentFee
+                                        "termPayment":  Number(this.state.repayment.replace(/[^0-9\.]+/g,"")),
+                                        "totalInterest": Number(this.state.total.replace(/[^0-9\.]+/g,"")),
+                                        "establishmentFee": this.state.establishmentFee,
+                                        "createDate": new Date()
                                     };
-                                    const res = await fetch(_url + "addUpdateLoan", {
-                                        method: "post",
-                                        body: JSON.stringify(req),
-                                        headers: { "Content-Type": "application/json" }
-                                        }).then(res => {
-                                            console.log("update quote response...." + JSON.stringify(res));
-                                            return res;
-                                        }).catch(ex => {
-                                            console.log("exception update quote.." + ex);
-                                            throw ex;
-                                        });
-
+                                    const res = await axios({
+                                        method: 'post',
+                                        url: _url + "CustomerRequestLoans",
+                                        headers: { 'Content-Type': 'application/json' },
+                                        data: req
+                                    }).then(function (response) {
+                                        if (response.status === 200 && response.data.status === 200) {
+                                            window.location.href = "/success";
+                                        } else {
+                                            console.log(response);
+                                        }
+                                    }).catch(function (error) {
+                                        console.log(error);
+                                    });                                    
                                         return res;
                                        }
                                     }
